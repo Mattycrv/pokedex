@@ -1,0 +1,21 @@
+@import url('https://fonts.googleapis.com/css2?family=Alata&family=Luckiest+Guy&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Quicksand:wght@300..700&family=Raleway:ital,wght@0,100..900;1,100..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+
+html {
+    font-size: 10px;
+}
+
+* {
+    margin: 0px;
+    padding: 0px;
+    box-sizing: border-box;
+    font-family: "Roboto";
+}
+
+body {
+    margin: 0px;
+    padding: 0px;
+}
+
+h1::first-letter, p::first-letter {
+    text-transform: uppercase;
+}
