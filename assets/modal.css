@@ -3,7 +3,6 @@
     margin: 50px auto;
     border-radius: 30px;
     border: none;
-    height: 635px;
 }
 
 .modal::backdrop {
@@ -47,17 +46,27 @@
 .modal__img {
     width: 200px;
     position: relative;
-    z-index: 1002;
+    z-index: 1003;
 }
 
 .modal__infos--container {
     background-color: rgb(255, 255, 255);
-    border-radius: 30px 30px 0 0;
-    padding: 40px 25px 0;
+    padding: 0px 25px 0;
     font-size: 1.5rem;
     z-index: 1001;
-    position: relative;
-    bottom: 40px;
+    
+}
+
+.modal__infos--container::before {
+    content: "";
+    position: absolute;
+    background-color: rgb(255, 255, 255);
+    width: 100%;
+    height: 50px;
+    z-index: 1002;
+    top: 300px;
+    right: 0px;
+    border-radius: 30px 30px 0 0;
 }
 
 .modal__section--container {
@@ -74,14 +83,15 @@
     grid-template-areas:
         "species speciesResponse"
         "height heightResponse"
-        "weight weightResponse"
+        "weight__text weightResponse"
         "abilities abilitiesResponse"
         "breeding ."
         "gender genderResponse"
         "eggGroups eggGroupsResponse"
         "eggCycle eggCycleResponse";
     
-    row-gap: 20px;
+    row-gap: 15px;
+    margin-top: 40px;
 }
 
 .species {
@@ -100,8 +110,8 @@
     grid-area: heightResponse;
 }
 
-.weight {
-    grid-area: weight;
+.weight__text {
+    grid-area: weight__text;
 }
 
 .weightResponse {
@@ -118,6 +128,7 @@
 
 .breeding {
     grid-area: breeding;
+    weight: bold;
 }
 
 .gender {
@@ -142,4 +153,8 @@
 
 .eggCycleResponse {
     grid-area: eggCycleResponse;
+}
+
+.about__info--text {
+    color: rgba(0, 0, 0, 0.6);
 }

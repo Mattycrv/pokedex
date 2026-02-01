@@ -91,29 +91,29 @@ async function getPokemons() {
                                             <p class="modal__section">Movimentos</p>
                                         </div>
                                         <div class="about__section">
-                                            <p class="about__info species">Espécie</p>
-                                            <p class="about__info speciesResponse">${data.species.name}</p>
+                                            <p class="about__info--text species">Espécie</p>
+                                            <p class="about__info--reponse speciesResponse">${data.species.name}</p>
 
-                                            <p class="about__info height">Altura</p>
-                                            <p class="about__info heightResponse">${data.height * 10}cm</p>
+                                            <p class="about__info--text height">Altura</p>
+                                            <p class="about__info--reponse heightResponse">${data.height * 10}cm</p>
                                            
-                                            <p class="about__info weight">Peso</p>
-                                            <p class="about__info weightResponse">${data.weight / 10}kg</p>
+                                            <p class="about__info--text weight_text">Peso</p>
+                                            <p class="about__info--reponse weightResponse">${data.weight / 10}kg</p>
 
-                                            <p class="about__info abilities">Habilidades</p>
-                                            <p class="about__info abilitiesResponse">${data.abilities.map(a => a.ability.name.charAt(0).toUpperCase() + a.ability.name.slice(1)).join(", ")}</p>
+                                            <p class="about__info--text abilities">Habilidades</p>
+                                            <p class="about__info--reponse abilitiesResponse">${data.abilities.map(a => a.ability.name.charAt(0).toUpperCase() + a.ability.name.slice(1)).join(", ")}</p>
 
                                             <p class="about__info breeding">Criação</p>
 
-                                            <p class="about__info gender">Gênero</p>
-                                            <p class="about__info genderResponse">♂${100 - ((dataSpecies.gender_rate / 8) * 100)}%</p>
-                                            <p class="about__info genderResponse">♀${((dataSpecies.gender_rate / 8) * 100)}%</p>
+                                            <p class="about__info--text gender">Gênero</p>
+                                            <p class="about__info--reponse genderResponse">♂${100 - ((dataSpecies.gender_rate / 8) * 100)}%</p>
+                                            <p class="about__info--reponse genderResponse">♀${((dataSpecies.gender_rate / 8) * 100)}%</p>
                                             
-                                            <p class="about__info eggGroups">Grupo de Ovos</p>
-                                            <p class="about__info eggGroupsResponse">${dataSpecies.egg_groups.map(e => e.name.charAt(0).toUpperCase() + e.name.slice(1)).join(", ")}</p>
+                                            <p class="about__info--text eggGroups">Grupo de Ovos</p>
+                                            <p class="about__info--reponse eggGroupsResponse">${dataSpecies.egg_groups.map(e => e.name.charAt(0).toUpperCase() + e.name.slice(1)).join(", ")}</p>
                                                 
-                                            <p class="about__info eggCycle">Ciclo do Ovo</p>
-                                            <p class="about__info eggCycleResponse">${dataSpecies.hatch_counter}</p>
+                                            <p class="about__info--text eggCycle">Ciclo do Ovo</p>
+                                            <p class="about__info--reponse eggCycleResponse">${dataSpecies.hatch_counter}</p>
                                         </div>
                                     </div>`;
             
