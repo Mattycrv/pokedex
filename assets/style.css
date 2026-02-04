@@ -16,21 +16,34 @@
 }
 
 .pokemons__card {
-    background-color: rgb(71, 210, 174);
+    display: flex;
+    flex-direction: column;
     max-width: 155px;
-    max-height: 220px;
+    min-height: 200px;
     width: 100%;
-    padding: 30px 15px 0px;
+    padding: 20px 15px 15px 15px;
     border-radius: 15px;
+}
+
+.pokemons__information--container {
+    display: flex;
+    flex-direction: column;
 }
 
 .pokemons__information {
     display: flex;
     flex-direction: column;
-    justify-content: end;
-    align-content: end;
     color: white;
-    font-size: 1.5rem;
+}
+
+.pokemons__type {
+    display: flex;
+    margin-bottom: 5px;
+    width: fit-content;
+    padding: 3px 10px;
+    border-radius: 30px;
+    background-color: rgba(255, 255, 255, .2);
+    font-size: 1.3rem;
 }
 
 .pokemons__number--container {
@@ -39,18 +52,31 @@
 
 .pokemons__number {
     justify-self: end;
+    font-size: 1.3rem;
 }
 
-.pokemons__img {
+.pokemons__img--container {
     display: flex;
-    justify-self: end;
-    align-self: end;
-    object-fit: cover;
-    width: 100px;
+    justify-content: center;
+    align-items: center;
+    margin-top: auto;
+}
+
+.pokemons__img {  
+    display: block;
+    object-fit: contain;
+    width: 80px;
+    height: 80px;
 }
 
 .pokemons__name {
     font-weight: bold;
+    margin-bottom: 10px;
+    letter-spacing: 1px;
+    font-size: 1.5rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
 }
 
 #loadMore {
@@ -74,5 +100,3 @@
 .pokemons__information--text {
     display: flex;
 }
-
-

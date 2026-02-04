@@ -39,16 +39,16 @@ async function getPokemons() {
 
         cards.innerHTML = `<div class="pokemons__information">
                                 <div class="pokemons__information--text">
-                                    <div>
+                                    <div class="pokemons__information--container">
                                         <p class="pokemons__name">${data.name}</p>
                                         ${data.types.map(t => `<p class="pokemons__type">${t.type.name}</p>`).join('')}
                                     </div>
                                     <div class="pokemons__number--container">
                                         <p class="pokemons__number">#${String(data.id).padStart(3, '0')}</p>
                                     </div>
-                                </div>
-                                <div class="pokemons__information--pic">
-                                    <img class="pokemons__img" src=${data.sprites.other["official-artwork"].front_default} alt="pokemon"/>
+                                    <div class="pokemons__img--container">
+                                        <img class="pokemons__img" src=${data.sprites.other["official-artwork"].front_default} alt="pokemon"/>
+                                    </div>
                                 </div>
                             </div>`;
 
@@ -104,10 +104,10 @@ async function getPokemons() {
                                             <p class="about__info--reponse abilitiesResponse">${data.abilities.map(a => a.ability.name.charAt(0).toUpperCase() + a.ability.name.slice(1)).join(", ")}</p>
 
                                             <p class="about__info breeding">Criação</p>
-
+                                            
                                             <p class="about__info--text gender">Gênero</p>
-                                            <p class="about__info--reponse genderResponse">♂${100 - ((dataSpecies.gender_rate / 8) * 100)}%</p>
-                                            <p class="about__info--reponse genderResponse">♀${((dataSpecies.gender_rate / 8) * 100)}%</p>
+                                            <p class="about__info--reponse genderResponse male"><span>♂ </span>${100 - ((dataSpecies.gender_rate / 8) * 100)}%</p>
+                                            <p class="about__info--reponse genderResponse famale"><span>♀ </span>${((dataSpecies.gender_rate / 8) * 100)}%</p>
                                             
                                             <p class="about__info--text eggGroups">Grupo de Ovos</p>
                                             <p class="about__info--reponse eggGroupsResponse">${dataSpecies.egg_groups.map(e => e.name.charAt(0).toUpperCase() + e.name.slice(1)).join(", ")}</p>
