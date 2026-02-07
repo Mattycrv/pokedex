@@ -29,6 +29,7 @@ async function getPokemons() {
         const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${i}/`);  
         const data = await response.json();
         console.log(data);
+        console.log(data.stats);
 
         const primaryType = data.types[0].type.name;
         const color = typeColors[primaryType];
@@ -85,12 +86,12 @@ async function getPokemons() {
                                     </div>
                                     <div class="modal__infos--container">
                                         <div class="modal__section--container">
-                                            <p class="modal__section">Sobre</p>
-                                            <p class="modal__section">Status</p>
-                                            <p class="modal__section">Evoluções</p>
-                                            <p class="modal__section">Movimentos</p>
+                                            <p class="modal__section" data-tab="sobre">Sobre</p>
+                                            <p class="modal__section" data-tab="status">Status</p>
+                                            <p class="modal__section" data-tab="evolucoes">Evoluções</p>
+                                            <p class="modal__section" data-tab="movimentos">Movimentos</p>
                                         </div>
-                                        <div class="about__section">
+                                        <div class="modal__tab" data-content="sobre">
                                             <p class="about__info--text species">Espécie</p>
                                             <p class="about__info--reponse speciesResponse">${data.species.name}</p>
 
@@ -115,9 +116,21 @@ async function getPokemons() {
                                             <p class="about__info--text eggCycle">Ciclo do Ovo</p>
                                             <p class="about__info--reponse eggCycleResponse">${dataSpecies.hatch_counter}</p>
                                         </div>
+                                        <div class="modal__tab" data-content="status" style="display: none;">
+                        
+                                        </div>
+
+                                        <div class="modal__tab" data-content="evolucoes" style="display: none;">
+                                            
+                                        </div>
+
+                                        <div class="modal__tab" data-content="movimentos" style="display: none;">
+                                            
+                                        </div>
                                     </div>`;
             
             modalBody.appendChild(modalStatus);
+
         });
     }
 
