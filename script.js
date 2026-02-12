@@ -29,7 +29,6 @@ async function getPokemons() {
         const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${i}/`);  
         const data = await response.json();
         console.log(data);
-        console.log(data.stats);
 
         const primaryType = data.types[0].type.name;
         const color = typeColors[primaryType];
@@ -63,6 +62,9 @@ async function getPokemons() {
             const responseSpecies = await fetch(data.species.url);
             const dataSpecies = await responseSpecies.json();
             console.log(dataSpecies);
+            console.log(data.stats.base_stat);
+
+            const statsTotal = data.stats.reduce((soma, stat) => soma + stat.base_stat, 0);
 
             const modal = document.querySelector(".modal");
             modal.style.backgroundColor = color;
@@ -116,9 +118,49 @@ async function getPokemons() {
                                             <p class="about__info--text eggCycle">Ciclo do Ovo</p>
                                             <p class="about__info--reponse eggCycleResponse">${dataSpecies.hatch_counter}</p>
                                         </div>
-                                        <div class="modal__tab" data-content="status" style="display: none;">
-                        
-                                        </div>
+                                        <div class="modal__tab--stats" data-content="status" style="display: none;">
+                                            <p>HP</p>
+                                            <p>${data.stats[0].base_stat}</p>
+                                            <div class="stats__bar">
+                                                <div class="stats__bar--value" style="width:${(data.stats[0].base_stat / 200) * 100}%; background-color:${(data.stats[0].base_stat > 50) ? "green" : "red"};"></div>
+                                            </div>
+
+                                            <p>Attack</p>
+                                            <p>${data.stats[1].base_stat}</p>
+                                            <div class="stats__bar">
+                                                <div class="stats__bar--value" style="width:${(data.stats[1].base_stat / 200) * 100}%; background-color:${(data.stats[1].base_stat > 50) ? "green" : "red"};"></div>
+                                            </div>
+
+                                            <p>Defense</p>
+                                            <p>${data.stats[2].base_stat}</p>
+                                            <div class="stats__bar">
+                                                <div class="stats__bar--value" style="width:${(data.stats[2].base_stat / 200) * 100}%; background-color:${(data.stats[2].base_stat > 50) ? "green" : "red"};"></div>
+                                            </div>
+
+                                            <p>Sp. Attack</p>
+                                            <p>${data.stats[3].base_stat}</p>
+                                            <div class="stats__bar">
+                                                <div class="stats__bar--value" style="width:${(data.stats[3].base_stat / 200) * 100}%; background-color:${(data.stats[3].base_stat > 50) ? "green" : "red"};"></div>
+                                            </div>
+
+                                            <p>Sp. Defense</p>
+                                            <p>${data.stats[4].base_stat}</p>
+                                            <div class="stats__bar">
+                                                <div class="stats__bar--value" style="width:${(data.stats[4].base_stat / 200) * 100}%; background-color:${(data.stats[4].base_stat > 50) ? "green" : "red"};"></div>
+                                            </div>
+
+                                            <p>Speed</p>
+                                            <p>${data.stats[5].base_stat}</p>
+                                            <div class="stats__bar">
+                                                <div class="stats__bar--value" style="width:${(data.stats[5].base_stat / 200) * 100}%; background-color:${(data.stats[5].base_stat > 50) ? "green" : "red"};"></div>
+                                            </div>
+
+                                            <p>Total</p>
+                                            <p>${statsTotal}</p>
+                                            <div class="stats__bar">
+                                                <div class="stats__bar--value" style="width:${(statsTotal / 200) * 100}%; background-color:${(statsTotal > 50) ? "green" : "red"};"></div>
+                                            </div>
+                                        </div>                                                         
 
                                         <div class="modal__tab" data-content="evolucoes" style="display: none;">
                                             
@@ -131,6 +173,21 @@ async function getPokemons() {
             
             modalBody.appendChild(modalStatus);
 
+            const allButtons = document.querySelectorAll(".modal__section");
+
+            allButtons.forEach(botao => {
+                botao.addEventListener('click', () => {
+                    const attributeButtons = botao.getAttribute("data-tab");
+                    const modalTab = document.querySelectorAll(".modal__tab");
+
+                    modalTab.forEach(aba => {
+                        aba.style.display = "none";
+                    });
+
+                    const dataContent = document.querySelector(`[data-content="${attributeButtons}"]`);
+                    dataContent.style.display = "grid";
+               });
+            })
         });
     }
 
