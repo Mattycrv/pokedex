@@ -216,3 +216,7 @@
 .stats__response {
     width: max-content;
 }
+
+.pokemon__image {
+    width: 100px;
+}

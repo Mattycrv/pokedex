@@ -67,16 +67,26 @@ async function getPokemons() {
             const dataEvolution = await responseEvolution.json();
             console.log(dataEvolution);
 
-            console.log(dataEvolution.chain.species.name);
-            console.log(dataEvolution.chain.evolves_to[0].species.name);
-            console.log(dataEvolution.chain.evolves_to[0].evolves_to[0].species.name);
+            const pokemonBase = dataEvolution.chain.species.name;
 
-            if (dataEvolution.chain.species += dataEvolution.chain.evolves_to[0]) {
-                const pokemonName = dataEvolution.chain.evolves_to[0].species.name;
-                if (pokemonName += dataEvolution.chain.evolves_to[0].evolves_to[0]) {
-                    return dataEvolution.chain.evolves_to[0].evolves_to[0].species.name;
+            if (dataEvolution.chain.evolves_to.length > 0) {
+                const primaryPokemonEvolution = dataEvolution.chain.evolves_to[0].species.name;
+                console.log(primaryPokemonEvolution);
+
+                const responsePrimaryPokemonEvolution = await fetch(`https://pokeapi.co/api/v2/pokemon/${primaryPokemonEvolution}`);
+                var dataPrimaryPokemonEvolution = await responsePrimaryPokemonEvolution.json();
+                
+                if (dataEvolution.chain.evolves_to[0].evolves_to.length > 0) {
+                    const secondPokemonEvolution = dataEvolution.chain.evolves_to[0].evolves_to[0].species.name;
+                    console.log(secondPokemonEvolution);
+
+                    const responseSecondPokemonEvolution = await fetch(`https://pokeapi.co/api/v2/pokemon/${secondPokemonEvolution}`);
+                    var dataSecondPokemonEvolution = await responseSecondPokemonEvolution.json();
                 }
             };
+
+            const responseBasePokemon = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokemonBase}`);
+            const dataBasePokemon = await responseBasePokemon.json();
 
             const statsTotal = data.stats.reduce((soma, stat) => soma + stat.base_stat, 0);
 
@@ -178,8 +188,12 @@ async function getPokemons() {
 
                                         <div class="modal__tab" data-content="evolucoes" style="display: none;">
                                             <h1>Evolution Chain</h1>
+                                            
 
-                                            <img src="
+                                            <img class="pokemon__image" src=${dataBasePokemon.sprites.other["official-artwork"].front_default} alt="pokemon"/>
+                                            <img class="pokemon__image" src=${dataPrimaryPokemonEvolution.sprites.other["official-artwork"].front_default} alt="pokemon"/>
+                                            <img class="pokemon__image" src=${dataSecondPokemonEvolution.sprites.other["official-artwork"].front_default} alt="pokemon"/>
+
                                         </div>
 
                                         <div class="modal__tab" data-content="movimentos" style="display: none;">
