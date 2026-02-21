@@ -59,16 +59,16 @@ async function getPokemons() {
 
     let modalBody = document.querySelector(".modal__body");
 
+    async function fetchData(url) {
+      const response = await fetch(url);
+      return await response.json();
+    }
+
     cards.addEventListener("click", async () => {
       document.getElementById("pokemonModal").showModal();
 
-      const responseSpecies = await fetch(data.species.url);
-      const dataSpecies = await responseSpecies.json();
-      console.log(dataSpecies);
-
-      const responseEvolution = await fetch(dataSpecies.evolution_chain.url);
-      const dataEvolution = await responseEvolution.json();
-      console.log(dataEvolution);
+      const dataSpecies = await fetchData(data.species.url);
+      const dataEvolution = await fetchData(dataSpecies.evolution_chain.url);
 
       const pokemonBaseName = dataEvolution.chain.species.name;
       let dataPrimaryPokemonEvolution = null;
