@@ -64,16 +64,10 @@ async function getPokemons() {
       return await response.json();
     }
 
-    cards.addEventListener("click", async () => {
-      document.getElementById("pokemonModal").showModal();
-
-      const dataSpecies = await fetchData(data.species.url);
-      const dataEvolution = await fetchData(dataSpecies.evolution_chain.url);
-
+    async function getPokemonEvolutions(dataEvolution) {
       const pokemonBaseName = dataEvolution.chain.species.name;
       let dataPrimaryPokemonEvolution = null;
       let dataSecondPokemonEvolution = null;
-
       let primaryPokemonEvolutionName;
       let secondPokemonEvolutionName;
 
@@ -102,8 +96,21 @@ async function getPokemons() {
       const responseBasePokemon = await fetch(
         `https://pokeapi.co/api/v2/pokemon/${pokemonBaseName}`,
       );
-
       const dataBasePokemon = await responseBasePokemon.json();
+
+      return {
+        base: dataBasePokemon,
+        first: dataPrimaryPokemonEvolution,
+        second: dataSecondPokemonEvolution,
+      };
+    }
+
+    cards.addEventListener("click", async () => {
+      document.getElementById("pokemonModal").showModal();
+
+      const dataSpecies = await fetchData(data.species.url);
+      const dataEvolution = await fetchData(dataSpecies.evolution_chain.url);
+      const evolutions = await getPokemonEvolutions(dataEvolution);
 
       const statsTotal = data.stats.reduce(
         (soma, stat) => soma + stat.base_stat,
@@ -118,31 +125,8 @@ async function getPokemons() {
       const modalStatus = document.createElement("div");
       modalStatus.classList.add("modal__status");
 
-      modalStatus.innerHTML = `<div class="modal__informations">
-                                        <div>
-                                            <h1 class="modal__name">${data.name}</h1>
-                                            ${data.types
-                                              .map(
-                                                (t) =>
-                                                  `<p class="pokemon__type--modal">${t.type.name}</p>`,
-                                              )
-                                              .join("")}
-                                        </div>
-                                        <div class="modal__id--container">
-                                            <p class="modal__id">#${String(data.id).padStart(3, "0")}</p>
-                                        </div>
-                                    </div>
-                                    <div class="modal__pic--container">
-                                        <img class="modal__img" src=${data.sprites.other["official-artwork"].front_default} alt="pokemon"/>
-                                    </div>
-                                    <div class="modal__infos--container">
-                                        <div class="modal__section--container">
-                                            <p class="modal__section" data-tab="sobre">Sobre</p>
-                                            <p class="modal__section" data-tab="status">Status</p>
-                                            <p class="modal__section" data-tab="evolucoes">Evoluções</p>
-                                            <p class="modal__section" data-tab="movimentos">Movimentos</p>
-                                        </div>
-                                        <div class="modal__tab about" data-content="sobre">
+      function fillAboutTab(data, dataSpecies) {
+        return `<div class="modal__tab about" data-content="sobre">
                                             <p class="about__info--text species">Espécie</p>
                                             <p class="about__info--reponse speciesResponse">
                                               ${data.species.name}
@@ -192,8 +176,16 @@ async function getPokemons() {
                                                 
                                             <p class="about__info--text eggCycle">Ciclo do Ovo</p>
                                             <p class="about__info--reponse eggCycleResponse">${dataSpecies.hatch_counter}</p>
-                                        </div>
-                                        <div class="modal__tab stats" data-content="status" style="display: none;">
+                                        </div>`;
+      }
+
+      function fillStatusTab(data) {
+        const statsTotal = data.stats.reduce(
+          (soma, stat) => soma + stat.base_stat,
+          0,
+        );
+
+        return `<div class="modal__tab stats" data-content="status" style="display: none;">
                                             <p>HP</p>
                                             <p class="stats__response">${data.stats[0].base_stat}</p>
                                             <div class="stats__bar">
@@ -235,14 +227,16 @@ async function getPokemons() {
                                             <div class="stats__bar">
                                                 <div class="stats__bar--value" style="width:${(statsTotal / 200) * 100}%; background-color:${statsTotal > 50 ? "green" : "red"};"></div>
                                             </div>
-                                        </div>                                                         
+                                        </div>`;
+      }
 
-                                        <div class="modal__tab evolutions" data-content="evolucoes" style="display: none;">
+      function fillEvolutionsTab(evolutions, dataEvolution) {
+        return `<div class="modal__tab evolutions" data-content="evolucoes" style="display: none;">
                                             <h1>Evolution Chain</h1>
                                             <div class="evolution-container">
                                                 <div>
-                                                    <img class="pokemon__image" src=${dataBasePokemon.sprites.other["official-artwork"].front_default} alt="pokemon"/>
-                                                    <p>${pokemonBaseName}</p>
+                                                    <img class="pokemon__image" src=${evolutions.base.sprites.other["official-artwork"].front_default} alt="pokemon"/>
+                                                    <p>${evolutions.base.name}</p>
                                                 </div>
 
                                                 ${
@@ -253,8 +247,8 @@ async function getPokemons() {
                                                         <p><span>Lvl ${dataEvolution.chain.evolves_to[0].evolution_details[0].min_level}</span></p>
                                                     </div>
                                                     <div>
-                                                        <img class="pokemon__image" src=${dataPrimaryPokemonEvolution.sprites.other["official-artwork"].front_default} alt="pokemon"/>
-                                                        <p>${primaryPokemonEvolutionName}</p>`
+                                                        <img class="pokemon__image" src=${evolutions.first.sprites.other["official-artwork"].front_default} alt="pokemon"/>
+                                                        <p>${evolutions.first.name}</p>`
                                                     : ""
                                                 }
                                                     </div>
@@ -263,8 +257,8 @@ async function getPokemons() {
                                                   dataEvolution.chain.evolves_to
                                                     .length > 0
                                                     ? `<div>
-                                                        <img class="pokemon__image" src=${dataPrimaryPokemonEvolution.sprites.other["official-artwork"].front_default} alt="pokemon"/>
-                                                        <p>${primaryPokemonEvolutionName}</p>`
+                                                        <img class="pokemon__image" src=${evolutions.first.sprites.other["official-artwork"].front_default} alt="pokemon"/>
+                                                        <p>${evolutions.first.name}</p>`
                                                     : ""
                                                 }
                                                     </div>
@@ -278,15 +272,17 @@ async function getPokemons() {
                                                         <p><span>Lvl ${dataEvolution.chain.evolves_to[0].evolves_to[0].evolution_details[0].min_level}</span></p>
                                                     </div>
                                                     <div>
-                                                        <img class="pokemon__image" src=${dataSecondPokemonEvolution.sprites.other["official-artwork"].front_default} alt="pokemon"/>
-                                                        <p>${secondPokemonEvolutionName}</p>
+                                                        <img class="pokemon__image" src=${evolutions.second.sprites.other["official-artwork"].front_default} alt="pokemon"/>
+                                                        <p>${evolutions.second.name}</p>
                                                     </div>`
                                                     : ""
                                                 }
                                             </div>
-                                        </div>
+                                        </div>`;
+      }
 
-                                        <div class="modal__tab moves" data-content="movimentos" style="display: none;">
+      function fillMovesTab(data) {
+        return `<div class="modal__tab moves" data-content="movimentos" style="display: none;">
                                             ${data.moves
                                               .slice(0, 20)
                                               .map(
@@ -294,28 +290,62 @@ async function getPokemons() {
                                                   `<p>• ${m.move.name.charAt(0).toUpperCase() + m.move.name.slice(1)}</p>`,
                                               )
                                               .join("")}
+                                        </div>`;
+      }
+
+      modalStatus.innerHTML = `<div class="modal__informations">
+                                        <div>
+                                            <h1 class="modal__name">${data.name}</h1>
+                                            ${data.types
+                                              .map(
+                                                (t) =>
+                                                  `<p class="pokemon__type--modal">${t.type.name}</p>`,
+                                              )
+                                              .join("")}
                                         </div>
+                                        <div class="modal__id--container">
+                                          <p class="modal__id">#${String(data.id).padStart(3, "0")}</p>
+                                        </div>
+                                    </div>
+                                    <div class="modal__pic--container">
+                                      <img class="modal__img" src=${data.sprites.other["official-artwork"].front_default} alt="pokemon"/>
+                                    </div>
+                                    <div class="modal__infos--container">
+                                      <div class="modal__section--container">
+                                        <p class="modal__section" data-tab="sobre">Sobre</p>
+                                        <p class="modal__section" data-tab="status">Status</p>
+                                        <p class="modal__section" data-tab="evolucoes">Evoluções</p>
+                                        <p class="modal__section" data-tab="movimentos">Movimentos</p>
+                                      </div>
+                                      ${fillAboutTab(data, dataSpecies)}
+                                      ${fillStatusTab(data)}
+                                      ${fillEvolutionsTab(evolutions, dataEvolution)}
+                                      ${fillMovesTab(data)}
                                     </div>`;
 
       modalBody.appendChild(modalStatus);
 
-      const allButtons = document.querySelectorAll(".modal__section");
+      function configureEventsTabs() {
+        const allButtons = document.querySelectorAll(".modal__section");
 
-      allButtons.forEach((botao) => {
-        botao.addEventListener("click", () => {
-          const attributeButtons = botao.getAttribute("data-tab");
-          const modalTab = document.querySelectorAll(".modal__tab");
+        allButtons.forEach((botao) => {
+          botao.addEventListener("click", () => {
+            const attributeButtons = botao.getAttribute("data-tab");
+            const modalTab = document.querySelectorAll(".modal__tab");
 
-          modalTab.forEach((aba) => {
-            aba.style.display = "none";
+            modalTab.forEach((aba) => {
+              aba.style.display = "none";
+            });
+
+            const dataContent = document.querySelector(
+              `[data-content="${attributeButtons}"]`,
+            );
+            dataContent.style.display = "grid";
           });
-
-          const dataContent = document.querySelector(
-            `[data-content="${attributeButtons}"]`,
-          );
-          dataContent.style.display = "grid";
         });
-      });
+      }
+
+      configureEventsTabs();
     });
   }
 
