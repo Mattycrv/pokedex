@@ -39,14 +39,19 @@ async function getPokemons() {
   }
 
   for (let i = state.offset + 1; i <= state.offset + limit; i++) {
-    const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${i}/`);
-    const data = await response.json();
-    console.log(data);
+    try {
+      const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${i}/`);
+      const data = await response.json();
+      console.log(data);
 
-    const { cards, color } = creatCard(data);
-    pokemons.appendChild(cards);
+      const { cards, color } = creatCard(data);
+      pokemons.appendChild(cards);
 
-    cards.addEventListener("click", () => openModal(data, color));
+      cards.addEventListener("click", () => openModal(data, color));
+    } catch (error) {
+      console.error(`Erro ao buscar pokémon ${i}:`, error);
+      continue;
+    }
   }
 
   state.offset += limit;
@@ -56,56 +61,62 @@ async function openModal(data, color) {
   document.getElementById("pokemonModal").showModal();
   const modalBody = document.querySelector(".modal__body");
 
-  const dataSpecies = await fetchData(data.species.url);
-  const dataEvolution = await fetchData(dataSpecies.evolution_chain.url);
-  const evolutions = await getPokemonEvolutions(dataEvolution);
+  try {
+    const dataSpecies = await fetchData(data.species.url);
+    const dataEvolution = await fetchData(dataSpecies.evolution_chain.url);
+    const evolutions = await getPokemonEvolutions(dataEvolution);
 
-  const statsTotal = data.stats.reduce(
-    (soma, stat) => soma + stat.base_stat,
-    0,
-  );
+    const statsTotal = data.stats.reduce(
+      (soma, stat) => soma + stat.base_stat,
+      0,
+    );
 
-  const modal = document.querySelector(".modal");
-  modal.style.backgroundColor = color;
+    const modal = document.querySelector(".modal");
+    modal.style.backgroundColor = color;
 
-  modalBody.innerHTML = "";
+    modalBody.innerHTML = "";
 
-  const modalStatus = document.createElement("div");
-  modalStatus.classList.add("modal__status");
+    const modalStatus = document.createElement("div");
+    modalStatus.classList.add("modal__status");
 
-  modalStatus.innerHTML = `<div class="modal__informations">
-                                          <div>
-                                              <h1 class="modal__name">${data.name}</h1>
-                                              ${data.types
-                                                .map(
-                                                  (t) =>
-                                                    `<p class="pokemon__type--modal">${t.type.name}</p>`,
-                                                )
-                                                .join("")}
-                                          </div>
-                                          <div class="modal__id--container">
-                                            <p class="modal__id">#${String(data.id).padStart(3, "0")}</p>
-                                          </div>
-                                      </div>
-                                      <div class="modal__pic--container">
-                                        <img class="modal__img" src=${data.sprites.other["official-artwork"].front_default} alt="pokemon"/>
-                                      </div>
-                                      <div class="modal__infos--container">
-                                        <div class="modal__section--container">
-                                          <p class="modal__section" data-tab="sobre">Sobre</p>
-                                          <p class="modal__section" data-tab="status">Status</p>
-                                          <p class="modal__section" data-tab="evolucoes">Evoluções</p>
-                                          <p class="modal__section" data-tab="movimentos">Movimentos</p>
+    modalStatus.innerHTML = `<div class="modal__informations">
+                                            <div>
+                                                <h1 class="modal__name">${data.name}</h1>
+                                                ${data.types
+                                                  .map(
+                                                    (t) =>
+                                                      `<p class="pokemon__type--modal">${t.type.name}</p>`,
+                                                  )
+                                                  .join("")}
+                                            </div>
+                                            <div class="modal__id--container">
+                                              <p class="modal__id">#${String(data.id).padStart(3, "0")}</p>
+                                            </div>
                                         </div>
-                                        ${fillAboutTab(data, dataSpecies)}
-                                        ${fillStatusTab(data)}
-                                        ${fillEvolutionsTab(evolutions, dataEvolution)}
-                                        ${fillMovesTab(data)}
-                                      </div>`;
+                                        <div class="modal__pic--container">
+                                          <img class="modal__img" src=${data.sprites.other["official-artwork"].front_default} alt="pokemon"/>
+                                        </div>
+                                        <div class="modal__infos--container">
+                                          <div class="modal__section--container">
+                                            <p class="modal__section" data-tab="sobre">Sobre</p>
+                                            <p class="modal__section" data-tab="status">Status</p>
+                                            <p class="modal__section" data-tab="evolucoes">Evoluções</p>
+                                            <p class="modal__section" data-tab="movimentos">Movimentos</p>
+                                          </div>
+                                          ${fillAboutTab(data, dataSpecies)}
+                                          ${fillStatusTab(data)}
+                                          ${fillEvolutionsTab(evolutions, dataEvolution)}
+                                          ${fillMovesTab(data)}
+                                        </div>`;
 
-  modalBody.appendChild(modalStatus);
+    modalBody.appendChild(modalStatus);
 
-  configureEventsTabs();
+    configureEventsTabs();
+  } catch (error) {
+    console.error("Não foi possível abrir o modal do pokémon:", error);
+    modalBody.innerHTML =
+      '<p style="color: white; padding: 2rem;">Erro ao carregar informações. Tente novamente.</p>';
+  }
 }
 
 getPokemons();
