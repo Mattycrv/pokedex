@@ -23,7 +23,7 @@ export function fillAboutTab(data, dataSpecies) {
                                                     a.ability.name
                                                       .charAt(0)
                                                       .toUpperCase() +
-                                                    a.ability.name.slice(1),
+                                                    a.ability.name.slice(1)
                                                 )
                                                 .join(", ")}
                                             </p>
@@ -42,7 +42,7 @@ export function fillAboutTab(data, dataSpecies) {
                                                   e.name
                                                     .charAt(0)
                                                     .toUpperCase() +
-                                                  e.name.slice(1),
+                                                  e.name.slice(1)
                                               )
                                               .join(", ")}
                                             </p>
@@ -55,7 +55,7 @@ export function fillAboutTab(data, dataSpecies) {
 export function fillStatusTab(data) {
   const statsTotal = data.stats.reduce(
     (soma, stat) => soma + stat.base_stat,
-    0,
+    0
   );
 
   return `<div class="modal__tab stats" data-content="status" style="display: none;">
@@ -160,7 +160,7 @@ export function fillMovesTab(data) {
               .slice(0, 20)
               .map(
                 (m) =>
-                  `<p>• ${m.move.name.charAt(0).toUpperCase() + m.move.name.slice(1)}</p>`,
+                  `<p>• ${m.move.name.charAt(0).toUpperCase() + m.move.name.slice(1)}</p>`
               )
               .join("")}
         </div>`;
@@ -179,7 +179,7 @@ export function configureEventsTabs() {
       });
 
       const dataContent = document.querySelector(
-        `[data-content="${attributeButtons}"]`,
+        `[data-content="${attributeButtons}"]`
       );
 
       dataContent.style.display = "grid";

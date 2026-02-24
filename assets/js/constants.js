@@ -1,3 +1,7 @@
+export const API_BASE_URL = "https://pokeapi.co/api/v2";
+export const API_POKEMON_URL = `${API_BASE_URL}/pokemon`;
+export const LIMIT = 10;
+
 export const typeColors = {
   normal: "#A8A878",
   fire: "#F08030",
@@ -22,5 +26,3 @@ export const typeColors = {
 export const state = {
   offset: 0,
 };
-
-export const limit = 10;

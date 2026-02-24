@@ -1,4 +1,4 @@
-import { typeColors, limit, state } from "./constants.js";
+import { typeColors, state, LIMIT, API_POKEMON_URL } from "./constants.js";
 import { fetchData, getPokemonEvolutions } from "./api.js";
 import {
   fillAboutTab,
@@ -25,7 +25,7 @@ async function getPokemons() {
                                         ${data.types
                                           .map(
                                             (t) =>
-                                              `<p class="pokemons__type">${t.type.name}</p>`,
+                                              `<p class="pokemons__type">${t.type.name}</p>`
                                           )
                                           .join("")}
                                     </div>
@@ -38,9 +38,9 @@ async function getPokemons() {
     return { cards: cards, color: color };
   }
 
-  for (let i = state.offset + 1; i <= state.offset + limit; i++) {
+  for (let i = state.offset + 1; i <= state.offset + LIMIT; i++) {
     try {
-      const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${i}/`);
+      const response = await fetch(`${API_POKEMON_URL}/${i}`);
       const data = await response.json();
       console.log(data);
 
@@ -54,7 +54,7 @@ async function getPokemons() {
     }
   }
 
-  state.offset += limit;
+  state.offset += LIMIT;
 }
 
 async function openModal(data, color) {
@@ -68,7 +68,7 @@ async function openModal(data, color) {
 
     const statsTotal = data.stats.reduce(
       (soma, stat) => soma + stat.base_stat,
-      0,
+      0
     );
 
     const modal = document.querySelector(".modal");
@@ -85,7 +85,7 @@ async function openModal(data, color) {
                                                 ${data.types
                                                   .map(
                                                     (t) =>
-                                                      `<p class="pokemon__type--modal">${t.type.name}</p>`,
+                                                      `<p class="pokemon__type--modal">${t.type.name}</p>`
                                                   )
                                                   .join("")}
                                             </div>

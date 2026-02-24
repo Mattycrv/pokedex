@@ -1,3 +1,5 @@
+import { API_POKEMON_URL } from "./constants.js";
+
 export async function fetchData(url) {
   const response = await fetch(url);
   return await response.json();
@@ -12,7 +14,7 @@ export async function getPokemonEvolutions(dataEvolution) {
 
   try {
     const responseBasePokemon = await fetch(
-      `https://pokeapi.co/api/v2/pokemon/${pokemonBaseName}`,
+      `${API_POKEMON_URL}/${pokemonBaseName}`
     );
     const dataBasePokemon = await responseBasePokemon.json();
 
@@ -20,7 +22,7 @@ export async function getPokemonEvolutions(dataEvolution) {
       primaryPokemonEvolutionName =
         dataEvolution.chain.evolves_to[0].species.name;
       const responsePrimaryPokemonEvolution = await fetch(
-        `https://pokeapi.co/api/v2/pokemon/${primaryPokemonEvolutionName}`,
+        `${API_POKEMON_URL}/${primaryPokemonEvolutionName}`
       );
 
       dataPrimaryPokemonEvolution =
@@ -30,7 +32,7 @@ export async function getPokemonEvolutions(dataEvolution) {
         secondPokemonEvolutionName =
           dataEvolution.chain.evolves_to[0].evolves_to[0].species.name;
         const responseSecondPokemonEvolution = await fetch(
-          `https://pokeapi.co/api/v2/pokemon/${secondPokemonEvolutionName}`,
+          `${API_POKEMON_URL}/${secondPokemonEvolutionName}`
         );
 
         dataSecondPokemonEvolution =
