@@ -1,132 +1,5 @@
-let offset = 0;
-let limit = 10;
-
-const typeColors = {
-  normal: "#A8A878",
-  fire: "#F08030",
-  water: "#6890F0",
-  grass: "#78C850",
-  electric: "#F8D030",
-  ice: "#98D8D8",
-  fighting: "#C03028",
-  poison: "#A040A0",
-  ground: "#E0C068",
-  flying: "#A890F0",
-  psychic: "#F85888",
-  bug: "#A8B820",
-  rock: "#B8A038",
-  ghost: "#705898",
-  dragon: "#7038F8",
-  dark: "#705848",
-  steel: "#B8B8D0",
-  fairy: "#EE99AC",
-};
-
-async function getPokemons() {
-  let pokemons = document.querySelector(".pokemons__table");
-
-  for (i = offset + 1; i <= offset + limit; i++) {
-    const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${i}/`);
-    const data = await response.json();
-    console.log(data);
-
-    const primaryType = data.types[0].type.name;
-    const color = typeColors[primaryType];
-
-    const cards = document.createElement("div");
-    cards.classList.add("pokemons__card");
-    cards.style.backgroundColor = color;
-
-    cards.innerHTML = `<div class="pokemons__information">
-                                <p class="pokemons__name">${data.name}</p>
-                                    <div>
-                                        ${data.types
-                                          .map(
-                                            (t) =>
-                                              `<p class="pokemons__type">${t.type.name}</p>`,
-                                          )
-                                          .join("")}
-                                    </div>
-                                <p class="pokemons__number">#${String(data.id).padStart(3, "0")}</p>
- 
-
-                            </div>
-                            <div class="pokemons__img--container">
-                                <img class="pokemons__img" src=${data.sprites.other["official-artwork"].front_default} alt="pokemon"/>
-                            </div>`;
-
-    pokemons.appendChild(cards);
-
-    let modalBody = document.querySelector(".modal__body");
-
-    async function fetchData(url) {
-      const response = await fetch(url);
-      return await response.json();
-    }
-
-    async function getPokemonEvolutions(dataEvolution) {
-      const pokemonBaseName = dataEvolution.chain.species.name;
-      let dataPrimaryPokemonEvolution = null;
-      let dataSecondPokemonEvolution = null;
-      let primaryPokemonEvolutionName;
-      let secondPokemonEvolutionName;
-
-      if (dataEvolution.chain.evolves_to.length > 0) {
-        primaryPokemonEvolutionName =
-          dataEvolution.chain.evolves_to[0].species.name;
-        const responsePrimaryPokemonEvolution = await fetch(
-          `https://pokeapi.co/api/v2/pokemon/${primaryPokemonEvolutionName}`,
-        );
-
-        dataPrimaryPokemonEvolution =
-          await responsePrimaryPokemonEvolution.json();
-
-        if (dataEvolution.chain.evolves_to[0].evolves_to.length > 0) {
-          secondPokemonEvolutionName =
-            dataEvolution.chain.evolves_to[0].evolves_to[0].species.name;
-          const responseSecondPokemonEvolution = await fetch(
-            `https://pokeapi.co/api/v2/pokemon/${secondPokemonEvolutionName}`,
-          );
-
-          dataSecondPokemonEvolution =
-            await responseSecondPokemonEvolution.json();
-        }
-      }
-
-      const responseBasePokemon = await fetch(
-        `https://pokeapi.co/api/v2/pokemon/${pokemonBaseName}`,
-      );
-      const dataBasePokemon = await responseBasePokemon.json();
-
-      return {
-        base: dataBasePokemon,
-        first: dataPrimaryPokemonEvolution,
-        second: dataSecondPokemonEvolution,
-      };
-    }
-
-    cards.addEventListener("click", async () => {
-      document.getElementById("pokemonModal").showModal();
-
-      const dataSpecies = await fetchData(data.species.url);
-      const dataEvolution = await fetchData(dataSpecies.evolution_chain.url);
-      const evolutions = await getPokemonEvolutions(dataEvolution);
-
-      const statsTotal = data.stats.reduce(
-        (soma, stat) => soma + stat.base_stat,
-        0,
-      );
-
-      const modal = document.querySelector(".modal");
-      modal.style.backgroundColor = color;
-
-      modalBody.innerHTML = "";
-
-      const modalStatus = document.createElement("div");
-      modalStatus.classList.add("modal__status");
-
-      function fillAboutTab(data, dataSpecies) {
-        return `<div class="modal__tab about" data-content="sobre">
+export function fillAboutTab(data, dataSpecies) {
+  return `<div class="modal__tab about" data-content="sobre">
                                             <p class="about__info--text species">Espécie</p>
                                             <p class="about__info--reponse speciesResponse">
                                               ${data.species.name}
@@ -177,15 +50,15 @@ async function getPokemons() {
                                             <p class="about__info--text eggCycle">Ciclo do Ovo</p>
                                             <p class="about__info--reponse eggCycleResponse">${dataSpecies.hatch_counter}</p>
                                         </div>`;
-      }
+}
 
-      function fillStatusTab(data) {
-        const statsTotal = data.stats.reduce(
-          (soma, stat) => soma + stat.base_stat,
-          0,
-        );
+export function fillStatusTab(data) {
+  const statsTotal = data.stats.reduce(
+    (soma, stat) => soma + stat.base_stat,
+    0,
+  );
 
-        return `<div class="modal__tab stats" data-content="status" style="display: none;">
+  return `<div class="modal__tab stats" data-content="status" style="display: none;">
                                             <p>HP</p>
                                             <p class="stats__response">${data.stats[0].base_stat}</p>
                                             <div class="stats__bar">
@@ -228,10 +101,10 @@ async function getPokemons() {
                                                 <div class="stats__bar--value" style="width:${(statsTotal / 200) * 100}%; background-color:${statsTotal > 50 ? "green" : "red"};"></div>
                                             </div>
                                         </div>`;
-      }
+}
 
-      function fillEvolutionsTab(evolutions, dataEvolution) {
-        return `<div class="modal__tab evolutions" data-content="evolucoes" style="display: none;">
+export function fillEvolutionsTab(evolutions, dataEvolution) {
+  return `<div class="modal__tab evolutions" data-content="evolucoes" style="display: none;">
                                             <h1>Evolution Chain</h1>
                                             <div class="evolution-container">
                                                 <div>
@@ -279,84 +152,37 @@ async function getPokemons() {
                                                 }
                                             </div>
                                         </div>`;
-      }
-
-      function fillMovesTab(data) {
-        return `<div class="modal__tab moves" data-content="movimentos" style="display: none;">
-                                            ${data.moves
-                                              .slice(0, 20)
-                                              .map(
-                                                (m) =>
-                                                  `<p>• ${m.move.name.charAt(0).toUpperCase() + m.move.name.slice(1)}</p>`,
-                                              )
-                                              .join("")}
-                                        </div>`;
-      }
-
-      modalStatus.innerHTML = `<div class="modal__informations">
-                                        <div>
-                                            <h1 class="modal__name">${data.name}</h1>
-                                            ${data.types
-                                              .map(
-                                                (t) =>
-                                                  `<p class="pokemon__type--modal">${t.type.name}</p>`,
-                                              )
-                                              .join("")}
-                                        </div>
-                                        <div class="modal__id--container">
-                                          <p class="modal__id">#${String(data.id).padStart(3, "0")}</p>
-                                        </div>
-                                    </div>
-                                    <div class="modal__pic--container">
-                                      <img class="modal__img" src=${data.sprites.other["official-artwork"].front_default} alt="pokemon"/>
-                                    </div>
-                                    <div class="modal__infos--container">
-                                      <div class="modal__section--container">
-                                        <p class="modal__section" data-tab="sobre">Sobre</p>
-                                        <p class="modal__section" data-tab="status">Status</p>
-                                        <p class="modal__section" data-tab="evolucoes">Evoluções</p>
-                                        <p class="modal__section" data-tab="movimentos">Movimentos</p>
-                                      </div>
-                                      ${fillAboutTab(data, dataSpecies)}
-                                      ${fillStatusTab(data)}
-                                      ${fillEvolutionsTab(evolutions, dataEvolution)}
-                                      ${fillMovesTab(data)}
-                                    </div>`;
-
-      modalBody.appendChild(modalStatus);
-
-      function configureEventsTabs() {
-        const allButtons = document.querySelectorAll(".modal__section");
-
-        allButtons.forEach((botao) => {
-          botao.addEventListener("click", () => {
-            const attributeButtons = botao.getAttribute("data-tab");
-            const modalTab = document.querySelectorAll(".modal__tab");
-
-            modalTab.forEach((aba) => {
-              aba.style.display = "none";
-            });
-
-            const dataContent = document.querySelector(
-              `[data-content="${attributeButtons}"]`,
-            );
-            dataContent.style.display = "grid";
-          });
-        });
-      }
-
-      configureEventsTabs();
-    });
-  }
-
-  offset += limit;
 }
 
-getPokemons();
-document.getElementById("loadMore").addEventListener("click", getPokemons);
+export function fillMovesTab(data) {
+  return `<div class="modal__tab moves" data-content="movimentos" style="display: none;">
+            ${data.moves
+              .slice(0, 20)
+              .map(
+                (m) =>
+                  `<p>• ${m.move.name.charAt(0).toUpperCase() + m.move.name.slice(1)}</p>`,
+              )
+              .join("")}
+        </div>`;
+}
 
-const modalClose = document.querySelector(".modal__close");
+export function configureEventsTabs() {
+  const allButtons = document.querySelectorAll(".modal__section");
 
-modalClose.addEventListener("click", () => {
-  document.getElementById("pokemonModal").close();
-});
+  allButtons.forEach((botao) => {
+    botao.addEventListener("click", () => {
+      const attributeButtons = botao.getAttribute("data-tab");
+      const modalTab = document.querySelectorAll(".modal__tab");
+
+      modalTab.forEach((aba) => {
+        aba.style.display = "none";
+      });
+
+      const dataContent = document.querySelector(
+        `[data-content="${attributeButtons}"]`,
+      );
+
+      dataContent.style.display = "grid";
+    });
+  });
+}
